@@ -5,7 +5,6 @@ include 'include/db.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
-
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $result = $conn->query($sql);
 
@@ -31,18 +30,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillSwap - Login</title>
+    <link rel="stylesheet" href="css.css">
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST" action="">
-        <label for="username">Username:</label>
-        <input type="text" name="username" placeholder="Enter your username" required>
-        <br><br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" placeholder="Enter your password" required>
-        <br><br>
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+    <div class="login-container">
+        <h1>Login</h1>
+        <?php
+        if (isset($error)) {
+            echo '<div class="error-message">' . $error . '</div>';
+        }
+        ?>
+        <form method="POST" action="">
+            <label for="username">Username:</label>
+            <input type="text" name="username" placeholder="Enter your username" required>
+            <br><br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" placeholder="Enter your password" required>
+            <br><br>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+    </div>
 </body>
 </html>
