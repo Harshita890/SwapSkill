@@ -1,3 +1,35 @@
+<?php
+include 'includes/db.php';
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    if (empty($username) || empty($password)) {
+        $error = "Username and password are required!";
+    } else {
+        $check_sql = "SELECT * FROM users WHERE username = '$username'";
+        $check_result = $conn->query($check_sql);
+
+        if ($check_result->num_rows > 0) {
+            $error = "Username already exists!";
+        } else {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "INSERT INTO users (username, password) VALUES ('$username', '$hashed_password')";
+
+            if ($conn->query($sql)) {
+                $success = "Registration successful! <a href='login.php'>Login here</a>.";
+            } else {
+                $error = "Error: " . $sql . "<br>" . $conn->error;
+            }
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +37,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillSwap - Register</title>
     <style>
-        
         body {
             font-family: Arial, sans-serif;
-            background-color:#432937;
+            background-color: #432937;
             margin: 0;
             padding: 0;
             display: flex;
@@ -43,7 +74,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color:#432937;
+            background-color: #432937;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -52,7 +83,7 @@
         }
 
         button:hover {
-            background-color:rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.1);
         }
 
         .message {
@@ -63,7 +94,7 @@
         }
 
         .error {
-            background-color:rgb(0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.1);
             color: #c62828;
         }
 
@@ -78,7 +109,7 @@
         }
 
         a {
-            color:#120b0f;
+            color: #120b0f;
             text-decoration: none;
         }
 
@@ -90,6 +121,12 @@
 <body>
     <div class="container">
         <h1>Register</h1>
+        <?php if ($error): ?>
+            <div class="message error"><?php echo $error; ?></div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="message success"><?php echo $success; ?></div>
+        <?php endif; ?>
         <form method="POST" action="">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
