@@ -1,5 +1,5 @@
 <?php
-include 'includes/db.php';
+include 'include/db.php';
 
 $error = '';
 $success = '';
