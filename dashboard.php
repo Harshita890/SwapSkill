@@ -20,7 +20,7 @@ if (!isset($_SESSION['user_id'])) {
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: url('dashboard image.webp') no-repeat center center/cover;
+            background: url('./assets/images/dashboard image.webp') no-repeat center center/cover;
         }
 
         .container {
@@ -71,12 +71,14 @@ if (!isset($_SESSION['user_id'])) {
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>Welcome, <?php echo $_SESSION['username']; ?>!</h1>
         <p>This is your dashboard. You can manage your profile and skills here.</p>
         <a href="profile.php" class="btn">View Profile</a>
         <a href="skills.php" class="btn">View Skills</a>
         <a href="logout.php" class="btn btn-secondary">Logout</a>
+
     </div>
 </body>
 </html>

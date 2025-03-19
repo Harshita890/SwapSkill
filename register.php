@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $sql = "INSERT INTO users (username, password) VALUES ('$username', '$hashed_password')";
-
             if ($conn->query($sql)) {
                 $success = "Registration successful! <a href='login.php'>Login here</a>.";
             } else {
