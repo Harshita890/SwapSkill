@@ -90,11 +90,11 @@ if (!isset($_SESSION['user_id'])) {
     <div class="sidebar">
         <h2>SkillSwap</h2>
         <ul>
-            <li class="active">Dashboard</li>
+            <botton><li class="active">Dashboard</li>
             <li>Profile</li>
             <li>Skills</li>
             <li>Messages</li>
-            <li>Logout</li>
+            <li>Logout</li></<botton>
         </ul>
     </div>
     <div class="main-content">

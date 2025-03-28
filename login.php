@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background:url('./assets/images/background_pic.webp') no-repeat center center;
         }
         .container {
             background: #fff;
@@ -128,4 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form method="POST" action="">
             <label for="username">Username:</label>
             <input type="text" name="username" placeholder="Enter your username" required>
-
+            <label for="password">passwords:</label>
+            <input type="text" name="password" placeholder="enter your passwords" required>
+            <button type =submit>submit:</button>
+        </form>
+        <p>Already dont have an account? <a href="register.php">register here</a>.</p>
+        </body>
+        </html>
