@@ -21,11 +21,13 @@ if (!isset($_SESSION['user_id'])) {
         }
         body {
             display: flex;
-            background: #f4f6fc;
+            background:url('./assets/images/images.jpg') no-repeat center center;
+            background-size: cover;
+            min-height: 100vh;
         }
         .sidebar {
             width: 250px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             height: 100vh;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -33,6 +35,7 @@ if (!isset($_SESSION['user_id'])) {
         .sidebar h2 {
             margin-bottom: 30px;
             text-align: center;
+            color: #432937;
         }
         .sidebar ul {
             list-style: none;
@@ -43,14 +46,25 @@ if (!isset($_SESSION['user_id'])) {
             border-radius: 5px;
             cursor: pointer;
             transition: 0.3s;
+            color: #333;
         }
         .sidebar ul li:hover, .sidebar ul li.active {
             background: #432937;
             color: white;
         }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
         .main-content {
             flex: 1;
             padding: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: fit-content;
         }
         .top-bar {
             display: flex;
@@ -63,6 +77,7 @@ if (!isset($_SESSION['user_id'])) {
             width: 300px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            background: rgba(255, 255, 255, 0.8);
         }
         .stats {
             display: grid;
@@ -71,18 +86,45 @@ if (!isset($_SESSION['user_id'])) {
             margin-bottom: 20px;
         }
         .stat-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             text-align: center;
+            backdrop-filter: blur(5px);
         }
         .activities {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .video-call-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #432937;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .video-call-btn:hover {
+            background: #5a3a4a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .welcome-text {
+            font-weight: 600;
+            color: #432937;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -90,17 +132,17 @@ if (!isset($_SESSION['user_id'])) {
     <div class="sidebar">
         <h2>SkillSwap</h2>
         <ul>
-            <botton><li class="active">Dashboard</li>
-            <li>Profile</li>
-            <li>Skills</li>
-            <li>Messages</li>
-            <li>Logout</li></<botton>
+            <li class="active"><a href="dashboard.php">Dashboard</a></li>
+            <li><a href="profile.php">Profile</a></li>
+            <li><a href="skills.php">Skills</a></li>
+            <li><a href="messages.php">Messages</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>
     <div class="main-content">
         <div class="top-bar">
             <input type="text" placeholder="Search...">
-            <span>Welcome, <?php echo $_SESSION['username']; ?></span>
+            <span class="welcome-text">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
         </div>
         <div class="stats">
             <div class="stat-card">
@@ -121,6 +163,7 @@ if (!isset($_SESSION['user_id'])) {
             <p>Ray released a new project</p>
             <p>Maxwell joined the team</p>
         </div>
+        <a href="https://meet.jit.si/SkillSwapSession" class="video-call-btn" target="_blank">Join Video Call Session</a>
     </div>
 </body>
 </html>

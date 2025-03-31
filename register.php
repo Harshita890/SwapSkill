@@ -10,34 +10,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    if (empty($fullname) || empty($username) || empty($email) || empty($password)) {
-        $error = "All fields are required!";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Invalid email format!";
-    } elseif (strlen($password) < 6) {
-        $error = "Password must be at least 6 characters long!";
+    if (empty($username) || empty($password)) {
+        $error = "Username and password are required!";
     } else {
-        // Check if username or email already exists
-        $check_sql = "SELECT * FROM users WHERE username = ? OR email = ?";
-        $stmt = $conn->prepare($check_sql);
-        $stmt->bind_param("ss", $username, $email);
-        $stmt->execute();
-        $check_result = $stmt->get_result();
+        $check_sql = "SELECT * FROM users WHERE username = '$username'";
+        $check_result = $conn->query($check_sql);
 
         if ($check_result->num_rows > 0) {
-            $error = "Username or email already exists!";
+            $error = "Username already exists!";
         } else {
+            // Hash the password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $insert_sql = "INSERT INTO users (fullname, username, email, password) VALUES (?, ?, ?, ?)";
-            $stmt = $conn->prepare($insert_sql);
-            $stmt->bind_param("ssss", $fullname, $username, $email, $hashed_password);
-
-            if ($stmt->execute()) {
+            $sqli = "INSERT INTO users (username, password) VALUES ('$username', '$hashed_password')";
+            if ($conn->query($sqli)) {
                 $success = "Registration successful! <a href='login.php'>Login here</a>.";
             } else {
-                $error = "Error: " . $conn->error;
+                $error = "Error: " . $sqli . "<br>" . $conn->error;
+                
             }
         }
+        $stmt->close();
     }
 }
 ?>
@@ -65,14 +57,15 @@ body {
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 320px;
+            width: 300px;
             text-align: center;
         }
         h1 {
             margin-bottom: 20px;
             color: #333;
         }
-        input {
+
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -91,7 +84,7 @@ body {
             cursor: pointer;
         }
         button:hover {
-            background-color: #5a3d4d;
+            background-color: rgba(0, 0, 0, 0.1);
         }
         .message {
             margin-top: 15px;
@@ -100,7 +93,7 @@ body {
             font-size: 14px;
         }
         .error {
-            background-color: #ffebee;
+            background-color: rgba(0, 0, 0, 0.1);
             color: #c62828;
         }
         .success {
@@ -121,20 +114,20 @@ body {
     </style>
 </head>
 <body>
-    <h1>Register</h1>
-    <?php if ($error): ?>
-        <div style="color: red;"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-        <div style="color: green;"><?php echo $success; ?></div>
-    <?php endif; ?>
-    <form method="POST" action="">
-        <input type="text" name="fullname" placeholder="Full Name" required>
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password (min 6 chars)" required>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="login.php">Login here</a>.</p>
+    <div class="container">
+        <h1>Register</h1>
+        <?php if ($error): ?>
+            <div class="message error"><?php echo $error; ?></div>
+        <?php endif; ?>
+        <?php if ($success): ?>
+            <div class="message success"><?php echo $success; ?></div>
+        <?php endif; ?>
+        <form method="POST" action="">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="login.php">Login here</a>.</p>
+    </div>
 </body>
 </html>
