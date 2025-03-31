@@ -1,157 +1,117 @@
 <?php
 session_start();
+
+// Database configuration
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'skillswap';
+
+// Create connection
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+$user_id = $_SESSION['user_id'];
+$error = $success = '';
+
+// Create user_profiles table if it doesn't exist
+$conn->query("CREATE TABLE IF NOT EXISTS user_profiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    bio TEXT,
+    skills VARCHAR(255),
+    location VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+)");
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $bio = $conn->real_escape_string($_POST['bio'] ?? '');
+    $skills = $conn->real_escape_string($_POST['skills'] ?? '');
+    $location = $conn->real_escape_string($_POST['location'] ?? '');
+    
+    // Check if profile exists
+    $check = $conn->query("SELECT id FROM user_profiles WHERE user_id = $user_id");
+    
+    if ($check->num_rows > 0) {
+        // Update existing profile
+        $sql = "UPDATE user_profiles SET bio='$bio', skills='$skills', location='$location' WHERE user_id=$user_id";
+    } else {
+        // Create new profile
+        $sql = "INSERT INTO user_profiles (user_id, bio, skills, location) VALUES ($user_id, '$bio', '$skills', '$location')";
+    }
+    
+    if ($conn->query($sql)) {
+        $success = "Profile updated successfully!";
+    } else {
+        $error = "Error updating profile: " . $conn->error;
+    }
+}
+
+// Get profile data
+$profile = ['bio' => '', 'skills' => '', 'location' => ''];
+$result = $conn->query("SELECT bio, skills, location FROM user_profiles WHERE user_id = $user_id");
+if ($result && $result->num_rows > 0) {
+    $profile = $result->fetch_assoc();
+}
+$conn->close();
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillSwap - Profile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>My Profile</title>
     <style>
-        /* Same styles as dashboard.php */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        body {
-            display: flex;
-            background: #f4f6fc;
-        }
-        .sidebar {
-            width: 250px;
-            background: #ffffff;
-            padding: 20px;
-            height: 100vh;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .sidebar h2 {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar ul li {
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .sidebar ul li:hover, .sidebar ul li.active {
-            background: #432937;
-            color: white;
-        }
-        .sidebar ul li a {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        .main-content {
-            flex: 1;
-            padding: 20px;
-        }
-        .profile-card {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .profile-pic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #ddd;
-            margin-right: 20px;
-            overflow: hidden;
-        }
-        .profile-pic img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .profile-info h2 {
-            margin-bottom: 5px;
-        }
-        .profile-details {
-            margin-top: 20px;
-        }
-        .profile-details div {
-            margin-bottom: 15px;
-        }
-        .profile-details label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .profile-details input, .profile-details textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .save-btn {
-            background: #432937;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        textarea { height: 100px; }
+        button { background: #432937; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        .error { color: red; margin-bottom: 15px; }
+        .success { color: green; margin-bottom: 15px; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>SkillSwap</h2>
-        <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li class="active"><a href="profile.php">Profile</a></li>
-            <li><a href="skills.php">Skills</a></li>
-            <li><a href="messages.php">Messages</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="profile-pic">
-                    <img src="https://via.placeholder.com/100" alt="Profile Picture">
-                </div>
-                <div class="profile-info">
-                    <h2><?php echo htmlspecialchars($_SESSION['username']); ?></h2>
-                    <p>Member since <?php echo date("Y"); ?></p>
-                </div>
-            </div>
-            <div class="profile-details">
-                <div>
-                    <label for="bio">Bio</label>
-                    <textarea id="bio" rows="4">I'm passionate about learning and sharing skills!</textarea>
-                </div>
-                <div>
-                    <label for="skills">Skills</label>
-                    <input type="text" id="skills" value="Web Development, Graphic Design">
-                </div>
-                <div>
-                    <label for="location">Location</label>
-                    <input type="text" id="location" value="New York, USA">
-                </div>
-                <button class="save-btn">Save Changes</button>
-            </div>
+    <h1>My Profile</h1>
+    
+    <?php if ($error): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+    
+    <?php if ($success): ?>
+        <div class="success"><?= htmlspecialchars($success) ?></div>
+    <?php endif; ?>
+    
+    <form method="post">
+        <div class="form-group">
+            <label>Bio:</label>
+            <textarea name="bio"><?= htmlspecialchars($profile['bio']) ?></textarea>
         </div>
-    </div>
+        
+        <div class="form-group">
+            <label>Skills (comma separated):</label>
+            <input type="text" name="skills" value="<?= htmlspecialchars($profile['skills']) ?>">
+        </div>
+        
+        <div class="form-group">
+            <label>Location:</label>
+            <input type="text" name="location" value="<?= htmlspecialchars($profile['location']) ?>">
+        </div>
+        
+        <button type="submit">Save Profile</button>
+    </form>
+    
+    <p><a href="dashboard.php">← Back to Dashboard</a></p>
 </body>
 </html>

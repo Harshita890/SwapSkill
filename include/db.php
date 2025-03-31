@@ -1,10 +1,10 @@
 <?php
 $host = 'localhost';
-$user = 'root';
+$username = 'root';
 $password = '';
 $database = 'skillswap';
 
-$conn = new mysqli($host, $user, $password, $database);
+$conn = new mysqli($host, $username, $password, $database);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

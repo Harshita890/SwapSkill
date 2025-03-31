@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
         }
         body {
             display: flex;
-            background:url('./assets/images/images.jpg') no-repeat center center;
+            background: #f4f6fc;
             background-size: cover;
             min-height: 100vh;
         }
