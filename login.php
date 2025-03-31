@@ -1,16 +1,12 @@
 <?php
 session_start();
-include 'include/db.php'; // Ensure this file correctly connects to your database
-
-$error = ''; // Variable to store error messages
-
+include 'include/db.php'; 
+$error = ''; 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Ensure the input fields exist before accessing them
     $username = isset($_POST['username']) ? trim($_POST['username']) : '';
     $password = isset($_POST['password']) ? trim($_POST['password']) : '';
 
-    // Debugging: Print POST data
-    // echo "<pre>"; print_r($_POST); echo "</pre>";
 
     if (empty($username) || empty($password)) {
         $error = "Username and password are required!";
