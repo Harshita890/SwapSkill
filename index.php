@@ -67,7 +67,7 @@ session_start();
         <p>lets exchange the skills </p>
 
         <p>
-    <?php echo isset($_SESSION['user_id']) ? "You are logged in as <strong>{$_SESSION[: "Welcome!";'username']}</strong>."  ?>
+    <?php echo isset($_SESSION['user_id']) ? "You are logged in as <strong>{$_SESSION[: "Welcome! login the page for skillswap";'username']}</strong>."  ?>
 </p>
 <a href="<?php echo isset($_SESSION['user_id']) ? 'dashboard.php' : 'login.php'; ?>" class="btn">
     <?php echo isset($_SESSION['user_id']) ? 'Go to Dashboard' : 'Login'; ?>
