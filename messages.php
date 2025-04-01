@@ -82,7 +82,7 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h3>John Doe</h3>
+            <h3>harshita</h3>
         </div>
         <div class="messages" id="messages">
             <div class="message received">

@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background:url('./assets/images/background_pic.webp') no-repeat center center;
+        
         }
         .container {
             background: #fff;
