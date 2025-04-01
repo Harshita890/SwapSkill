@@ -18,7 +18,8 @@ session_start();
             align-items: center;
             height: 100vh;
             flex-direction: column;
-            background:url('./assets/images/background_pic.webp') no-repeat center center;
+            background: url('./assets/images/background_pic.webp') no-repeat center center;
+            background-size: cover;
         }
         .container {
             background: #fff;
@@ -43,7 +44,7 @@ session_start();
             margin: 0.5rem;
             font-size: 1rem;
             color: #fff;
-            background-color:#37212d;
+            background-color: #37212d;
             border: none;
             border-radius: 4px;
             text-decoration: none;
@@ -51,30 +52,38 @@ session_start();
             transition: background-color 0.3s ease;
         }
         .btn:hover {
-            background-color:#060405;
+            background-color: #060405;
         }
         .btn-secondary {
             background-color: #6c757d;
         }
         .btn-secondary:hover {
-            background-color:#060405;
+            background-color: #060405;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome to SkillSwap</h1>
-        <p>lets exchange the skills </p>
+        <p>Let's exchange skills!</p>
 
         <p>
-    <?php echo isset($_SESSION['user_id']) ? "You are logged in as <strong>{$_SESSION[: "Welcome! login the page for skillswap";'username']}</strong>."  ?>
-</p>
-<a href="<?php echo isset($_SESSION['user_id']) ? 'dashboard.php' : 'login.php'; ?>" class="btn">
-    <?php echo isset($_SESSION['user_id']) ? 'Go to Dashboard' : 'Login'; ?>
-</a>
-<?php if (!isset($_SESSION['user_id'])): ?>
-    <a href="register.php" class="btn btn-secondary">Register</a>
-<?php endif; ?>
+            <?php 
+            if (isset($_SESSION['user_id']) && isset($_SESSION['username'])) {
+                echo "You are logged in as <strong>" . htmlspecialchars($_SESSION['username']) . "</strong>.";
+            } else {
+                echo "Welcome! Please login to start SkillSwapping.";
+            }
+            ?>
+        </p>
+
+        <a href="<?php echo isset($_SESSION['user_id']) ? 'dashboard.php' : 'login.php'; ?>" class="btn">
+            <?php echo isset($_SESSION['user_id']) ? 'Go to Dashboard' : 'Login'; ?>
+        </a>
+
+        <?php if (!isset($_SESSION['user_id'])): ?>
+            <a href="register.php" class="btn btn-secondary">Register</a>
+        <?php endif; ?>
     </div>
 </body>
 </html>
