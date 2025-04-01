@@ -87,7 +87,7 @@
         <div class="messages" id="messages">
             <div class="message received">
                 <div class="message-content">
-                    Hey, can you help me with web design?
+                    Hey, can you help me with dsa?
                 </div>
             </div>
             <div class="message sent">
@@ -97,7 +97,7 @@
             </div>
             <div class="message received">
                 <div class="message-content">
-                    I'm trying to create a responsive layout but having trouble with CSS.
+                    
                 </div>
             </div>
         </div>
