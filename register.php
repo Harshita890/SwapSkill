@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters long!";
     } else {
-        // Check if username or email already exists
+    
         $check_sql = "SELECT * FROM users WHERE username = ? OR email = ?";
         $stmt = $conn->prepare($check_sql);
         $stmt->bind_param("ss", $username, $email);
