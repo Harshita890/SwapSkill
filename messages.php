@@ -27,6 +27,7 @@
             padding: 15px;
             background: #432937;
             color: white;
+            text-align: center;
         }
         .messages {
             height: 400px;
@@ -77,17 +78,34 @@
             border-radius: 20px;
             cursor: pointer;
         }
+        /* Back to Dashboard box */
+        .dashboard-box {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .dashboard-box a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #432937;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .dashboard-box a:hover {
+            background: #5a3e50;
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h3>harshita</h3>
+            <h3>Harshita</h3>
         </div>
         <div class="messages" id="messages">
             <div class="message received">
                 <div class="message-content">
-                    Hey, can you help me with dsa?
+                    Hey, can you help me with DSA?
                 </div>
             </div>
             <div class="message sent">
@@ -105,6 +123,10 @@
             <input type="text" id="messageInput" placeholder="Type a message...">
             <button onclick="sendMessage()">Send</button>
         </div>
+    </div>
+
+    <div class="dashboard-box">
+        <a href="dashboard.php">← Back to Dashboard</a>
     </div>
 
     <script>
@@ -127,10 +149,8 @@
                 // Add to messages
                 messagesDiv.appendChild(newMessage);
                 
-                // Clear input
                 input.value = '';
                 
-                // Scroll to bottom
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 
             }
@@ -142,6 +162,5 @@
             }
         });
     </script>
-    <p><a href="dashboard.php">← Back to Dashboard</a></p>
 </body>
 </html>
