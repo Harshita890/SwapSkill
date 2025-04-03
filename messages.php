@@ -142,5 +142,6 @@
             }
         });
     </script>
+    <p><a href="dashboard.php">← Back to Dashboard</a></p>
 </body>
 </html>
