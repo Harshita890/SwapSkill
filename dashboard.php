@@ -4,6 +4,12 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+// Database connection
+$mysqli = new mysqli("localhost", "root", "", "skillswap");
+if ($mysqli->connect_error) {
+    die("Database connection failed: " . $mysqli->connect_error);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,6 +32,7 @@ if (!isset($_SESSION['user_id'])) {
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
+
     <div class="main-content">
         <div class="top-bar">
             <div class="search-container">
@@ -36,6 +43,7 @@ if (!isset($_SESSION['user_id'])) {
                 Welcome back, <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
             </div>
         </div>
+
         <div class="stats">
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-book-open"></i></div>
@@ -53,81 +61,67 @@ if (!isset($_SESSION['user_id'])) {
                 <p>Learning Partners</p>
             </div>
         </div>
-        
+
         <div class="learning-resources">
             <h3>Learning Resources</h3>
             <div class="resource-grid">
-                <div class="resource-card">
-                    <div class="resource-icon book">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <div class="resource-info">
-                        <h4>Web Development Fundamentals</h4>
-                        <p>Essential HTML, CSS & JavaScript</p>
-                    </div>
-                </div>
-                <div class="resource-card">
-                    <div class="resource-icon video">
-                        <i class="fas fa-play"></i>
-                    </div>
-                    <div class="resource-info">
-                        <h4>Design Thinking Workshop</h4>
-                        <p>Problem-solving framework</p>
-                    </div>
-                </div>
-                <div class="resource-card">
-                    <div class="resource-icon code">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <div class="resource-info">
-                        <h4>Python for Data Analysis</h4>
-                        <p>Pandas & NumPy essentials</p>
-                    </div>
-                </div>
-                <div class="resource-card">
-                    <div class="resource-icon quiz">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <div class="resource-info">
-                        <h4>Digital Marketing Assessment</h4>
-                        <p>Test your SEO knowledge</p>
-                    </div>
-                </div>
+                <?php
+                $res_query = "SELECT * FROM learning_resources";
+                $res_result = $mysqli->query($res_query);
+
+                if ($res_result && $res_result->num_rows > 0):
+                    while ($res = $res_result->fetch_assoc()):
+                ?>
+                    <a href="<?php echo htmlspecialchars($res['url']); ?>" class="resource-card" target="_blank">
+                        <div class="resource-icon <?php echo htmlspecialchars($res['icon_class']); ?>">
+                            <i class="fas fa-<?php echo htmlspecialchars($res['icon_class']); ?>"></i>
+                        </div>
+                        <div class="resource-info">
+                            <h4><?php echo htmlspecialchars($res['title']); ?></h4>
+                            <p><?php echo htmlspecialchars($res['description']); ?></p>
+                        </div>
+                    </a>
+                <?php
+                    endwhile;
+                else:
+                    echo "<p>No resources available.</p>";
+                endif;
+                ?>
             </div>
         </div>
-        
+
         <div class="activities">
             <h3>Recent Activities</h3>
-            <div class="activity-item">
-                <div class="activity-icon blue">
-                    <i class="fas fa-project-diagram"></i>
+            <?php
+            $userId = $_SESSION['user_id'];
+            $sql = "SELECT activity_title, description, activity_time FROM learning_history WHERE user_id = ? ORDER BY activity_time DESC LIMIT 5";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0):
+                while ($row = $result->fetch_assoc()):
+            ?>
+                <div class="activity-item">
+                    <div class="activity-icon blue">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="activity-info">
+                        <h4><?php echo htmlspecialchars($row['activity_title']); ?></h4>
+                        <p><?php echo htmlspecialchars($row['description']); ?></p>
+                    </div>
+                    <div class="activity-time"><?php echo htmlspecialchars($row['activity_time']); ?></div>
                 </div>
-                <div class="activity-info">
-                    <h4>Ray shared a new project</h4>
-                    <p>Web Development Portfolio with interactive elements</p>
-                </div>
-                <div class="activity-time">2 hours ago</div>
-            </div>
-            <div class="activity-item">
-                <div class="activity-icon green">
-                    <i class="fas fa-user-graduate"></i>
-                </div>
-                <div class="activity-info">
-                    <h4>Maxwell completed UX Design course</h4>
-                    <p>Added new certification to skill profile</p>
-                </div>
-                <div class="activity-time">Yesterday</div>
-            </div>
+            <?php
+                endwhile;
+            else:
+                echo "<p>No recent activities found.</p>";
+            endif;
+            ?>
         </div>
-        
-        <div class="button-group">
-            <a href="https://meet.jit.si/SkillSwapSession" class="video-call-btn" target="_blank">
-                <i class="fas fa-video"></i> Join Learning Session
-            </a>
-            <a href="#" class="schedule-btn">
-                <i class="fas fa-calendar-alt"></i> Schedule Mentor Meeting
-            </a>
-        </div>
+
+       
     </div>
 </body>
 </html>
