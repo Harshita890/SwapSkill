@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Database connection
+
 $mysqli = new mysqli("localhost", "root", "", "skillswap");
 if ($mysqli->connect_error) {
     die("Database connection failed: " . $mysqli->connect_error);
@@ -21,12 +21,12 @@ if ($mysqli->connect_error) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css.css">
     <style>
-        /* Remove underline from all links */
+        
         a {
             text-decoration: none;
         }
 
-        /* Social Media Links Styling */
+        
         .social-media {
             text-align: center;
             padding: 20px;
@@ -47,6 +47,11 @@ if ($mysqli->connect_error) {
 
         .social-media i {
             margin-right: 8px;
+        }
+
+       
+        .resource-icon i {
+            color: black;
         }
     </style>
 </head>
@@ -76,17 +81,17 @@ if ($mysqli->connect_error) {
         <div class="stats">
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-book-open"></i></div>
-                <h3>19</h3>
+                <h3>1</h3>
                 <p>Lessons Completed</p>
             </div>
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-certificate"></i></div>
-                <h3>7</h3>
+                <h3>1</h3>
                 <p>Skills Achieved</p>
             </div>
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-users"></i></div>
-                <h3>23</h3>
+                <h3>7</h3>
                 <p>Learning Partners</p>
             </div>
         </div>
@@ -103,7 +108,7 @@ if ($mysqli->connect_error) {
                 ?>
                     <a href="<?php echo htmlspecialchars($res['url']); ?>" class="resource-card" target="_blank">
                         <div class="resource-icon <?php echo htmlspecialchars($res['icon_class']); ?>">
-                            <i class="fas fa-<?php echo htmlspecialchars($res['icon_class']); ?>"></i>
+                            <i class="fas fa-book"></i>
                         </div>
                         <div class="resource-info">
                             <h4><?php echo htmlspecialchars($res['title']); ?></h4>
@@ -150,15 +155,15 @@ if ($mysqli->connect_error) {
             ?>
         </div>
 
-        <!-- Social Media Links -->
+        
         <div class="social-media">
             <a href="https://www.instagram.com" target="_blank">
                 <i class="fab fa-instagram"></i> Instagram
             </a>
-            <a href="https://www.linkedin.com" target="_blank">
+            <a href="https://www.linkedin.com/in/harshita-gautam/" target="_blank">
                 <i class="fab fa-linkedin"></i> LinkedIn
             </a>
-            <a href="mailto:your-email@gmail.com">
+            <a href="harshita890gautam@gmail.com">
                 <i class="fas fa-envelope"></i> Gmail
             </a>
         </div>
