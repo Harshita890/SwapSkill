@@ -20,6 +20,35 @@ if ($mysqli->connect_error) {
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css.css">
+    <style>
+        /* Remove underline from all links */
+        a {
+            text-decoration: none;
+        }
+
+        /* Social Media Links Styling */
+        .social-media {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .social-media a {
+            font-size: 20px;
+            margin: 0 15px;
+            color: #333;
+            display: inline-block;
+        }
+
+        .social-media a:hover {
+            color: #0073e6;
+        }
+
+        .social-media i {
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -121,7 +150,18 @@ if ($mysqli->connect_error) {
             ?>
         </div>
 
-       
+        <!-- Social Media Links -->
+        <div class="social-media">
+            <a href="https://www.instagram.com" target="_blank">
+                <i class="fab fa-instagram"></i> Instagram
+            </a>
+            <a href="https://www.linkedin.com" target="_blank">
+                <i class="fab fa-linkedin"></i> LinkedIn
+            </a>
+            <a href="mailto:your-email@gmail.com">
+                <i class="fas fa-envelope"></i> Gmail
+            </a>
+        </div>
     </div>
 </body>
 </html>
