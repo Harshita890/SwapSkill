@@ -2,13 +2,11 @@
 session_start();
 require("include/db.php");
 
-// Redirect to login if not authenticated
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
 
-// Initialize variables
 $error = '';
 $success = '';
 $formData = [
@@ -17,14 +15,11 @@ $formData = [
     'video_link' => ''
 ];
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_skill'])) {
-    // Sanitize and validate inputs
     $formData['skill_name'] = trim($_POST['skill_name'] ?? '');
     $formData['description'] = trim($_POST['description'] ?? '');
     $formData['video_link'] = trim($_POST['video_link'] ?? '');
 
-    // Validation
     if (empty($formData['skill_name'])) {
         $error = "Skill name is required.";
     } elseif (strlen($formData['skill_name']) > 100) {
@@ -32,17 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_skill'])) {
     } elseif (empty($formData['description'])) {
         $error = "Description is required.";
     } else {
-        // Insert into database using prepared statement
-        $stmt = $conn->prepare("INSERT INTO skills (skill_name, description, video_link) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", 
+        $user_id = $_SESSION['user_id'];
+        $stmt = $conn->prepare("INSERT INTO skills (skill_name, description, video_link, user_id) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", 
             $formData['skill_name'], 
             $formData['description'], 
-            $formData['video_link']
+            $formData['video_link'],
+            $user_id
         );
 
         if ($stmt->execute()) {
             $success = "Skill added successfully!";
-            // Clear form on success
             $formData = [
                 'skill_name' => '',
                 'description' => '',
@@ -55,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_skill'])) {
     }
 }
 
-// Close database connection
 $conn->close();
 ?>
 
