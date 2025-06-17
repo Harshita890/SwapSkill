@@ -13,7 +13,6 @@ if(isset($_SESSION['user_id'])) {
     $isPremium = $user['is_premium'] ?? false;
 }
 
-// Get skills along with creator information
 $query = "SELECT s.*, u.username as creator FROM skills s JOIN users u ON s.user_id = u.id";
 $result = mysqli_query($conn, $query);
 ?>
@@ -190,6 +189,8 @@ $result = mysqli_query($conn, $query);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s;
             position: relative;
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
         }
 
         .skill-card:hover {
@@ -285,32 +286,14 @@ $result = mysqli_query($conn, $query);
             transform: translateY(-50%);
         }
 
-        /* Animations */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .skill-card {
-            animation: fadeIn 0.8s ease forwards;
-            opacity: 0;
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 1200px) {
@@ -320,42 +303,16 @@ $result = mysqli_query($conn, $query);
         }
 
         @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            
-            .main-content {
-                margin: 10px;
-                height: auto;
-                padding: 20px;
-            }
-            
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .top-bar {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .top-bar a {
-                margin-left: 0;
-                margin-right: 10px;
-                margin-bottom: 10px;
-            }
+            body { flex-direction: column; }
+            .main-content { margin: 10px; height: auto; padding: 20px; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .top-bar { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .top-bar a { margin-left: 0; margin-right: 10px; margin-bottom: 10px; }
         }
 
         @media (max-width: 480px) {
-            .skill-actions {
-                flex-direction: column;
-            }
-            
-            .skill-actions a {
-                width: 100%;
-                justify-content: center;
-            }
+            .skill-actions { flex-direction: column; }
+            .skill-actions a { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -377,7 +334,6 @@ $result = mysqli_query($conn, $query);
 
         <div class="skills-grid">
             <?php while($row = mysqli_fetch_assoc($result)) { 
-                // Generate a unique Jitsi room name based on skill ID and creator ID
                 $jitsiRoom = "SkillSession_" . $row['id'] . "_" . $row['user_id'];
                 $jitsiLink = "https://meet.jit.si/" . urlencode($jitsiRoom);
             ?>
