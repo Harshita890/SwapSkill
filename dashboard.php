@@ -5,7 +5,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-
 $mysqli = new mysqli("localhost", "root", "", "skillswap");
 if ($mysqli->connect_error) {
     die("Database connection failed: " . $mysqli->connect_error);
@@ -21,37 +20,69 @@ if ($mysqli->connect_error) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css.css">
     <style>
-        
         a {
             text-decoration: none;
         }
-
-        
         .social-media {
             text-align: center;
             padding: 20px;
             margin-top: 20px;
             background-color: #f4f4f4;
         }
-
         .social-media a {
             font-size: 20px;
             margin: 0 15px;
             color: #333;
             display: inline-block;
         }
-
         .social-media a:hover {
             color: #0073e6;
         }
-
         .social-media i {
             margin-right: 8px;
         }
-
-       
         .resource-icon i {
             color: black;
+        }
+        .partners-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 300px;
+        }
+        .partners-popup h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .partner-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .partner-item:last-child {
+            border-bottom: none;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .close-btn {
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -81,17 +112,17 @@ if ($mysqli->connect_error) {
         <div class="stats">
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-book-open"></i></div>
-                <h3>1</h3>
+                <h3>0</h3>
                 <p>Lessons Completed</p>
             </div>
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-certificate"></i></div>
-                <h3>1</h3>
+                <h3>0</h3>
                 <p>Skills Achieved</p>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" id="partners-stat">
                 <div class="icon"><i class="fas fa-users"></i></div>
-                <h3>7</h3>
+                <h3>5</h3>
                 <p>Learning Partners</p>
             </div>
         </div>
@@ -155,7 +186,6 @@ if ($mysqli->connect_error) {
             ?>
         </div>
 
-        
         <div class="social-media">
             <a href="https://www.instagram.com" target="_blank">
                 <i class="fab fa-instagram"></i> Instagram
@@ -163,10 +193,58 @@ if ($mysqli->connect_error) {
             <a href="https://www.linkedin.com/in/harshita-gautam/" target="_blank">
                 <i class="fab fa-linkedin"></i> LinkedIn
             </a>
-            <a href="harshita890gautam@gmail.com">
+            <a href="mailto:harshita890gautam@gmail.com">
                 <i class="fas fa-envelope"></i> Gmail
             </a>
         </div>
     </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="partners-popup" id="partnersPopup">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <h3>Your Learning Partners</h3>
+        <div class="partner-item">
+            <a href="https://www.geeksforgeeks.org/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> GeeksforGeeks
+            </a>
+        </div>
+        <div class="partner-item">
+            <a href="https://intellipaat.com/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Intellipaat
+            </a>
+        </div>
+        <div class="partner-item">
+            <a href="https://www.simplilearn.com/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Simplilearn
+            </a>
+        </div>
+        <div class="partner-item">
+            <a href="https://www.lpu.in/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> LPU
+            </a>
+        </div>
+        <div class="partner-item">
+            <a href="https://www.upes.ac.in/" target="_blank">
+                <i class="fas fa-external-link-alt"></i> UPES
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('partners-stat').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('partnersPopup').style.display = 'block';
+        });
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('partnersPopup').style.display = 'none';
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('partnersPopup').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
