@@ -4,58 +4,55 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+include('include/db.php');
+
+// Fetch logged-in user's info
+$user_id = $_SESSION['user_id'];
+$user_result = mysqli_query($conn, "SELECT username FROM users WHERE id = $user_id");
+$user_row = mysqli_fetch_assoc($user_result);
+$username = $user_row['username'];
+
+// Fetch chat messages (latest 50)
+$messages_result = mysqli_query($conn, "SELECT * FROM messages ORDER BY timestamp ASC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkillSwap - Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="sidebar">
         <h2>SkillSwap</h2>
         <ul>
-            <li><a href="dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
-            <li><a href="skills.php"><i class="fas fa-graduation-cap"></i> Skills</a></li>
-            <li class="active"><a href="messages.php"><i class="fas fa-comment-alt"></i> Messages</a></li>
-            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="dashboard.php">Dashboard</a></li>
+            <li><a href="profile.php">Profile</a></li>
+            <li><a href="skills.php">Skills</a></li>
+            <li class="active"><a href="messages.php">Messages</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>
 
     <div class="main-content">
         <div class="chat-container">
             <div class="chat-header">
-                <div class="user-avatar">H</div>
-                <h3>Harshita</h3>
+                <div class="user-avatar"><?php echo strtoupper(substr($username, 0, 1)); ?></div>
+                <h3><?php echo htmlspecialchars($username); ?></h3>
             </div>
             <div class="messages" id="messages">
-                <div class="message received">
-                    <div class="message-content">
-                        Hey, can you help me with DSA?
+                <?php while($msg = mysqli_fetch_assoc($messages_result)): ?>
+                    <div class="message <?php echo $msg['sender_id'] == $user_id ? 'sent' : 'received'; ?>">
+                        <div class="message-content"><?php echo htmlspecialchars($msg['message']); ?></div>
+                        <div class="message-time"><?php echo date('h:i A', strtotime($msg['timestamp'])); ?></div>
                     </div>
-                    <div class="message-time">10:30 AM</div>
-                </div>
-                <div class="message sent">
-                    <div class="message-content">
-                        Sure! What do you need help with?
-                    </div>
-                    <div class="message-time">10:32 AM</div>
-                </div>
-                <div class="message received">
-                    <div class="message-content">
-                        I'm struggling with linked list implementations. Can we schedule a session?
-                    </div>
-                    <div class="message-time">10:33 AM</div>
-                </div>
+                <?php endwhile; ?>
             </div>
             <div class="message-input">
                 <input type="text" id="messageInput" placeholder="Type a message...">
-                <button onclick="sendMessage()"><span>Send</span> <i class="fas fa-paper-plane"></i></button>
+                <button onclick="sendMessage()">Send <i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -64,42 +61,39 @@ if (!isset($_SESSION['user_id'])) {
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
-            
+
             if (message) {
-                const messagesDiv = document.getElementById('messages');
-                const now = new Date();
-                const hours = now.getHours();
-                const minutes = now.getMinutes();
-                const timeString = `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
-                
-                const newMessage = document.createElement('div');
-                newMessage.className = 'message sent';
-                newMessage.innerHTML = `
-                    <div class="message-content">
-                        ${message}
-                    </div>
-                    <div class="message-time">${timeString}</div>
-                `;
-                
-                
-                messagesDiv.appendChild(newMessage);
-                
-                input.value = '';
-                
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                fetch('send_message.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'message=' + encodeURIComponent(message)
+                })
+                .then(response => response.text())
+                .then(() => {
+                    input.value = '';
+                    loadMessages();
+                });
             }
         }
-        
+
+        function loadMessages() {
+            fetch('load_messages.php')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('messages').innerHTML = data;
+                    document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+                });
+        }
+
+        setInterval(loadMessages, 3000); // Auto-refresh every 3 seconds
+
         document.getElementById('messageInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
 
-        
-        window.onload = function() {
-            document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-        };
+        window.onload = loadMessages;
     </script>
 </body>
 </html>
