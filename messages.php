@@ -1,21 +1,22 @@
 <?php
 session_start();
+require_once('include/db.php');
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-include('include/db.php');
-
-// Fetch logged-in user's info
 $user_id = $_SESSION['user_id'];
-$user_result = mysqli_query($conn, "SELECT username FROM users WHERE id = $user_id");
-$user_row = mysqli_fetch_assoc($user_result);
+$stmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user_result = $stmt->get_result();
+$user_row = $user_result->fetch_assoc();
 $username = $user_row['username'];
-
-// Fetch chat messages (latest 50)
-$messages_result = mysqli_query($conn, "SELECT * FROM messages ORDER BY timestamp ASC");
+$stmt->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +24,7 @@ $messages_result = mysqli_query($conn, "SELECT * FROM messages ORDER BY timestam
     <title>SkillSwap - Chat</title>
     <link rel="stylesheet" href="css.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
@@ -42,22 +44,20 @@ $messages_result = mysqli_query($conn, "SELECT * FROM messages ORDER BY timestam
                 <div class="user-avatar"><?php echo strtoupper(substr($username, 0, 1)); ?></div>
                 <h3><?php echo htmlspecialchars($username); ?></h3>
             </div>
-            <div class="messages" id="messages">
-                <?php while($msg = mysqli_fetch_assoc($messages_result)): ?>
-                    <div class="message <?php echo $msg['sender_id'] == $user_id ? 'sent' : 'received'; ?>">
-                        <div class="message-content"><?php echo htmlspecialchars($msg['message']); ?></div>
-                        <div class="message-time"><?php echo date('h:i A', strtotime($msg['timestamp'])); ?></div>
-                    </div>
-                <?php endwhile; ?>
-            </div>
+            <div class="messages" id="messages"></div>
             <div class="message-input">
-                <input type="text" id="messageInput" placeholder="Type a message...">
+                <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
                 <button onclick="sendMessage()">Send <i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <script>
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
@@ -68,24 +68,25 @@ $messages_result = mysqli_query($conn, "SELECT * FROM messages ORDER BY timestam
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     body: 'message=' + encodeURIComponent(message)
                 })
-                .then(response => response.text())
-                .then(() => {
-                    input.value = '';
-                    loadMessages();
-                });
+                .then(response => {
+                    if (response.ok) {
+                        input.value = '';
+                        loadMessages();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
         }
 
         function loadMessages() {
-            fetch('load_messages.php')
+            fetch('get_messages.php')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('messages').innerHTML = data;
-                    document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-                });
+                    scrollToBottom();
+                })
+                .catch(error => console.error('Error:', error));
         }
-
-        setInterval(loadMessages, 3000); // Auto-refresh every 3 seconds
 
         document.getElementById('messageInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -93,7 +94,8 @@ $messages_result = mysqli_query($conn, "SELECT * FROM messages ORDER BY timestam
             }
         });
 
-        window.onload = loadMessages;
+        loadMessages();
+        setInterval(loadMessages, 2000);
     </script>
 </body>
 </html>
