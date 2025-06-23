@@ -2,7 +2,6 @@
 session_start();
 require("include/db.php");
 
-// Redirect to login if not logged in
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
@@ -12,10 +11,8 @@ $chatSelected = false;
 $other_user = null;
 $other_user_id = null;
 
-// Get list of all other users
 $users_list = mysqli_query($conn, "SELECT id, username FROM users WHERE id != " . $_SESSION['user_id']);
 
-// Check if a chat is selected
 if (isset($_GET['other_user_id'])) {
     $other_user_id = intval($_GET['other_user_id']);
     $stmt = $conn->prepare("SELECT username FROM users WHERE id = ?");
@@ -57,8 +54,15 @@ if (isset($_GET['other_user_id'])) {
         margin-bottom: 20px;
     }
 
-    form, select {
+    .dashboard-link {
+        display: inline-block;
         margin-bottom: 20px;
+        background-color: var(--yellow);
+        color: black;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        text-decoration: none;
     }
 
     #chat-container {
@@ -90,26 +94,59 @@ if (isset($_GET['other_user_id'])) {
         padding: 20px;
         border-radius: 12px;
         margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
     }
 
     .message {
-        margin-bottom: 12px;
-        padding: 14px 20px;
-        border-radius: 20px;
-        max-width: 70%;
-        font-size: 16px;
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        max-width: 75%;
     }
 
-    .sent-message {
-        background: var(--green);
-        color: black;
+    .sent {
         align-self: flex-end;
+        flex-direction: row-reverse;
     }
 
-    .received-message {
+    .message-content {
         background: var(--yellow);
         color: black;
-        align-self: flex-start;
+        padding: 12px 16px;
+        border-radius: 20px;
+        position: relative;
+        max-width: 100%;
+        font-size: 15px;
+    }
+
+    .sent .message-content {
+        background: var(--green);
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--yellow);
+        color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .sent .avatar {
+        margin-left: 10px;
+        margin-right: 0;
+    }
+
+    .message-name {
+        font-weight: bold;
+        margin-bottom: 4px;
+        font-size: 14px;
+        color: var(--yellow);
     }
 
     #message-form {
@@ -160,22 +197,11 @@ if (isset($_GET['other_user_id'])) {
     option {
         color: black;
     }
-
-    @media (max-width: 768px) {
-        #chat-container {
-            padding: 20px;
-            max-height: 90vh;
-        }
-
-        .message {
-            max-width: 85%;
-        }
-    }
-</style>
-
+    </style>
 </head>
 <body>
 
+<a class="dashboard-link" href="dashboard.php">&larr; Back to Dashboard</a>
 <h2>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
 
 <?php if (!$chatSelected): ?>
@@ -191,7 +217,6 @@ if (isset($_GET['other_user_id'])) {
         </select>
         <button type="submit">Start Chat</button>
     </form>
-
 <?php else: ?>
     <div id="chat-container">
         <div id="chat-header">
@@ -207,6 +232,10 @@ if (isset($_GET['other_user_id'])) {
     </div>
 
     <script>
+        function getInitial(name) {
+            return name ? name.charAt(0).toUpperCase() : "?";
+        }
+
         function loadMessages() {
             fetch('get_messages.php?other_user_id=<?php echo $other_user_id; ?>')
                 .then(res => res.json())
@@ -214,10 +243,28 @@ if (isset($_GET['other_user_id'])) {
                     const container = document.getElementById('messages');
                     container.innerHTML = '';
                     data.forEach(msg => {
-                        const div = document.createElement('div');
-                        div.className = 'message ' + (msg.sender_id == <?php echo $_SESSION['user_id']; ?> ? 'sent-message' : 'received-message');
-                        div.textContent = msg.message;
-                        container.appendChild(div);
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'message ' + (msg.sender_id == <?php echo $_SESSION['user_id']; ?> ? 'sent' : '');
+
+                        const avatar = document.createElement('div');
+                        avatar.className = 'avatar';
+                        avatar.textContent = getInitial(msg.sender_id == <?php echo $_SESSION['user_id']; ?> ? '<?php echo $_SESSION['username']; ?>' : '<?php echo $other_user['username']; ?>');
+
+                        const content = document.createElement('div');
+                        content.className = 'message-content';
+                        const name = document.createElement('div');
+                        name.className = 'message-name';
+                        name.textContent = msg.sender_id == <?php echo $_SESSION['user_id']; ?> ? '<?php echo $_SESSION['username']; ?>' : '<?php echo $other_user['username']; ?>';
+                        const text = document.createElement('div');
+                        text.textContent = msg.message;
+
+                        content.appendChild(name);
+                        content.appendChild(text);
+
+                        wrapper.appendChild(avatar);
+                        wrapper.appendChild(content);
+
+                        container.appendChild(wrapper);
                     });
                     container.scrollTop = container.scrollHeight;
                 });

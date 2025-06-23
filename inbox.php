@@ -42,6 +42,10 @@ $result = $stmt->get_result();
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 10px;
+            transition: background 0.2s;
+        }
+        .message-box:hover {
+            background-color: #2a2a2a;
         }
         .message-box h4 {
             margin: 0;
@@ -54,19 +58,39 @@ $result = $stmt->get_result();
             font-size: 0.9em;
             color: #aaa;
         }
+        .dashboard-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            background-color: #ffd100;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .dashboard-link:hover {
+            background-color: #ffcc00;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
 </head>
 <body>
 
+<a class="dashboard-link" href="dashboard.php">&larr; Back to Dashboard</a>
 <h2>Your Inbox 📥</h2>
 
 <?php if ($result->num_rows > 0): ?>
     <?php while ($row = $result->fetch_assoc()): ?>
-        <div class="message-box">
-            <h4>From: <?php echo htmlspecialchars($row['sender_name']); ?></h4>
-            <p><?php echo nl2br(htmlspecialchars($row['message'])); ?></p>
-            <time>🕒 <?php echo date('d M Y, h:i A', strtotime($row['timestamp'])); ?></time>
-        </div>
+        <a href="messages.php?user_id=<?php echo $row['sender_id']; ?>">
+            <div class="message-box">
+                <h4>From: <?php echo htmlspecialchars($row['sender_name']); ?></h4>
+                <p><?php echo nl2br(htmlspecialchars($row['message'])); ?></p>
+                <time>🕒 <?php echo date('d M Y, h:i A', strtotime($row['timestamp'])); ?></time>
+            </div>
+        </a>
     <?php endwhile; ?>
 <?php else: ?>
     <p>No messages received yet.</p>
