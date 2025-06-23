@@ -1,24 +1,23 @@
 <?php
 session_start();
-require_once('include/db.php');
+require("include/db.php");
 
 if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$sender_id = $_SESSION['user_id'];
+$receiver_id = intval($_POST['receiver_id']);
 $message = trim($_POST['message']);
-$receiver_id = 2;
 
-if (!empty($message)) {
-    $stmt = $conn->prepare("
-        INSERT INTO messages 
-        (sender_id, receiver_id, message_content) 
-        VALUES (?, ?, ?)
-    ");
-    $stmt->bind_param("iis", $user_id, $receiver_id, $message);
+if ($message !== '') {
+    $stmt = $conn->prepare("INSERT INTO chat_messages (sender_id, receiver_id, message, timestamp, is_read) VALUES (?, ?, ?, NOW(), 0)");
+    $stmt->bind_param("iis", $sender_id, $receiver_id, $message);
     $stmt->execute();
-    $stmt->close();
+    echo json_encode(['status' => 'success']);
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Empty message']);
 }
 ?>
