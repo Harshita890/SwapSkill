@@ -94,7 +94,7 @@ if ($mysqli->connect_error) {
             <li><a href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
             <li><a href="skills.php"><i class="fas fa-graduation-cap"></i> Skills</a></li>
             <li><a href="messages.php"><i class="fas fa-comment-alt"></i> Messages</a></li>
-            <li><a href="inbox.php"><i class="fas fa-inbox"></i> Inbox</a></li> <!-- ✅ New Inbox Option -->
+            <li><a href="inbox.php"><i class="fas fa-inbox"></i> Inbox</a></li>
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
@@ -160,7 +160,7 @@ if ($mysqli->connect_error) {
             <h3>Recent Activities</h3>
             <?php
             $userId = $_SESSION['user_id'];
-            $sql = "SELECT activity_title, description, activity_time FROM learning_history WHERE user_id = ? ORDER BY activity_time DESC LIMIT 5";
+            $sql = "SELECT activity_title, description, activity_type, activity_time FROM learning_history WHERE user_id = ? ORDER BY activity_time DESC LIMIT 5";
             $stmt = $mysqli->prepare($sql);
             $stmt->bind_param("i", $userId);
             $stmt->execute();
@@ -168,10 +168,16 @@ if ($mysqli->connect_error) {
 
             if ($result->num_rows > 0):
                 while ($row = $result->fetch_assoc()):
+                    $icon = "fas fa-check-circle";
+                    if ($row['activity_type'] === 'video') {
+                        $icon = "fas fa-play-circle";
+                    } elseif ($row['activity_type'] === 'skill') {
+                        $icon = "fas fa-star";
+                    }
             ?>
                 <div class="activity-item">
                     <div class="activity-icon blue">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="<?php echo $icon; ?>"></i>
                     </div>
                     <div class="activity-info">
                         <h4><?php echo htmlspecialchars($row['activity_title']); ?></h4>

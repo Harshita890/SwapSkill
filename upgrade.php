@@ -19,288 +19,139 @@ if($user['is_premium']) {
 <html>
 <head>
     <title>Upgrade to Premium</title>
-    <link rel="stylesheet" type="text/css" href="css.css">
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
-    .upgrade-container {
-    display: flex;
-    max-width: 1000px;
-    margin: 30px auto;
-    background: var(--card-bg);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    animation: fadeIn 0.8s ease forwards;
-    border-left: 4px solid var(--accent1);
-}
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #fefde5;
+            color: #333;
+        }
 
-.upgrade-info {
-    flex: 1;
-    padding: 40px;
-    background: linear-gradient(135deg, var(--sidebar), #333333);
-    color: var(--text-light);
-}
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
 
-.upgrade-payment {
-    flex: 1;
-    padding: 40px;
-    background: var(--card-bg);
-}
+        .upgrade-container {
+            display: flex;
+            width: 90%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-.upgrade-info h2 {
-    font-size: 28px;
-    margin-bottom: 15px;
-    color: var(--primary);
-    position: relative;
-    padding-bottom: 10px;
-}
+        .upgrade-info, .upgrade-payment {
+            padding: 40px;
+            flex: 1;
+        }
 
-.upgrade-info h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: var(--secondary);
-    border-radius: 10px;
-}
+        .upgrade-info {
+            background: linear-gradient(135deg, #1a8e5f, #f5c518);
+            color: white;
+        }
 
-.upgrade-info p {
-    font-size: 16px;
-    line-height: 1.6;
-    opacity: 0.9;
-}
+        .upgrade-info h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
 
-.price-display {
-    font-size: 42px;
-    font-weight: 700;
-    margin: 25px 0;
-    color: var(--primary);
-}
+        .upgrade-info p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
 
-.price-display span {
-    font-size: 18px;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.benefits-list {
-    margin: 30px 0;
-}
-
-.benefit-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    padding: 12px 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.benefit-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateX(5px);
-}
-
-.benefit-icon {
-    margin-right: 15px;
-    font-size: 20px;
-    color: var(--secondary);
-    width: 30px;
-    height: 30px;
-    background: rgba(50, 205, 50, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.upgrade-payment h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: var(--text-dark);
-    position: relative;
-    padding-bottom: 10px;
-}
-
-.upgrade-payment h3::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 4px;
-    background: var(--primary);
-    border-radius: 10px;
-}
-
-.upgrade-payment p {
-    font-size: 16px;
-    color: #777;
-    margin-bottom: 25px;
-}
-
-#payment-form {
-    margin-top: 20px;
-}
-
-#payment-element {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: var(--yellow-light);
-    border-radius: 10px;
-    border: 2px solid #e0e0e0;
-}
-
-#payment-element:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 5px rgba(255, 209, 0, 0.2);
-}
-
-#submit {
-    background: linear-gradient(135deg, var(--secondary), var(--green-dark));
-    color: white;
-    border: none;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 50px;
-    cursor: pointer;
-    width: 100%;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 15px rgba(50, 205, 50, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-#submit:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(50, 205, 50, 0.4);
-}
-
-#submit::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
-    transition: all 0.5s ease;
-}
-
-#submit:hover::before {
-    left: 100%;
-}
-
-.back-link {
-    display: inline-block;
-    margin-top: 25px;
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-
-.back-link:hover {
-    color: var(--sidebar);
-    background: var(--primary);
-    transform: translateX(-5px);
-}
-
-#payment-message {
-    color: #e74c3c;
-    margin-top: 15px;
-    text-align: center;
-    padding: 12px;
-    background: #fdecea;
-    border-radius: 8px;
-    border-left: 4px solid #e74c3c;
-    animation: fadeIn 0.5s ease;
-}
-
-.loading-spinner {
-    display: none;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-    margin-left: 10px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-@media (max-width: 768px) {
-    .upgrade-container {
-        flex-direction: column;
-        margin: 15px;
-    }
-    
-    .upgrade-info, .upgrade-payment {
-        padding: 25px;
-    }
-    
-    .price-display {
-        font-size: 36px;
-        margin: 20px 0;
-    }
-}
-
-@media (max-width: 480px) {
-    .upgrade-info h2, .upgrade-payment h3 {
-        font-size: 24px;
-    }
-    
-    .benefit-item {
-        padding: 10px;
-        font-size: 14px;
-    }
-    
-    #submit {
-        padding: 12px;
-    }
-}
         .price-display {
-            font-size: 36px;
+            font-size: 48px;
             font-weight: bold;
             margin: 20px 0;
         }
+
+        .price-display span {
+            font-size: 16px;
+            font-weight: normal;
+        }
+
+        .benefits-list {
+            margin-top: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .benefit-icon {
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .upgrade-payment {
+            background-color: #fff;
+            color: #333;
+            border-left: 1px solid #eee;
+        }
+
+        .upgrade-payment h3 {
+            margin-bottom: 10px;
+        }
+
+        .upgrade-payment p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        #payment-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #payment-element {
+            margin-bottom: 20px;
+        }
+
+        button#submit {
+            padding: 12px 20px;
+            background-color: #f5c518;
+            border: none;
+            color: #000;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button#submit:hover {
+            background-color: #e0b000;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-left: 10px;
+            width: 16px;
+        }
+
         .back-link {
             display: inline-block;
             margin-top: 20px;
-            color: #6e8efb;
+            color: #1a8e5f;
             text-decoration: none;
         }
-        #payment-message {
-            color: #e74c3c;
-            margin-top: 15px;
-            text-align: center;
-        }
-        .loading-spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 10px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        .back-link:hover {
+            text-decoration: underline;
         }
     </style>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -311,7 +162,7 @@ if($user['is_premium']) {
             <h2>Upgrade to Premium</h2>
             <p>Get full access to all our exclusive content and features</p>
             
-            <div class="price-display">₹200<span style="font-size: 16px;">/month</span></div>
+            <div class="price-display">₹200<span style="font-size: 16px;">/for each skill</span></div>
             
             <div class="benefits-list">
                 <div class="benefit-item">
@@ -360,39 +211,35 @@ if($user['is_premium']) {
 
 <script>
     const stripe = Stripe('<?php echo getenv('STRIPE_PUBLIC_KEY'); ?>');
-    
-    // Initialize Stripe Elements
+
     const elements = stripe.elements({
         appearance: {
             theme: 'stripe',
             variables: {
-                colorPrimary: '#6e8efb',
-                colorBackground: '#f9f9f9',
+                colorPrimary: '#1a8e5f',
+                colorBackground: '#fefde5',
             }
         }
     });
-    
+
     const paymentElement = elements.create('payment');
     paymentElement.mount('#payment-element');
-    
-    // Handle form submission
+
     const form = document.getElementById('payment-form');
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        
-        // Show loading state
+
         document.getElementById('submit').disabled = true;
         document.getElementById('spinner').style.display = 'inline-block';
         document.getElementById('button-text').textContent = 'Processing...';
-        
-        // Confirm payment
+
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
                 return_url: window.location.origin + '/upgrade_success.php',
             }
         });
-        
+
         if (error) {
             document.getElementById('payment-message').textContent = error.message;
             document.getElementById('submit').disabled = false;
@@ -400,8 +247,7 @@ if($user['is_premium']) {
             document.getElementById('button-text').textContent = 'Upgrade Now';
         }
     });
-    
-    // Check for payment status in URL
+
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('payment_error')) {
         document.getElementById('payment-message').textContent = 
