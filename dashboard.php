@@ -94,6 +94,7 @@ if ($mysqli->connect_error) {
             <li><a href="profile.php"><i class="fas fa-user"></i> Profile</a></li>
             <li><a href="skills.php"><i class="fas fa-graduation-cap"></i> Skills</a></li>
             <li><a href="messages.php"><i class="fas fa-comment-alt"></i> Messages</a></li>
+            <li><a href="inbox.php"><i class="fas fa-inbox"></i> Inbox</a></li> <!-- ✅ New Inbox Option -->
             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
