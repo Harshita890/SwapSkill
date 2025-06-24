@@ -1,6 +1,6 @@
 # SkillSwap 
 
-SkillSwap is a PHP-based web application that allows users to exchange skills with each other in a structured way. It includes a user authentication system, skill management, messaging, and a premium upgrade option using Stripe integration. The design uses a modern UI theme with black, yellow, and green colors.
+SkillSwap is a PHP-based web application that allows users to exchange skills with each other in a structured way. It includes a user authentication system, skill management, messaging, and a premium upgrade option using Stripe integration.
 
 ---
 
