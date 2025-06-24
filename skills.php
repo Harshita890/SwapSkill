@@ -340,7 +340,7 @@ $result = mysqli_query($conn, $query);
                 <div class="skill-card" style="animation-delay: <?php echo (rand(1, 5) * 0.1); ?>s">
                     <h3><?php echo $row['skill_name']; ?></h3>
                     <p><?php echo $row['description']; ?></p>
-                    <div class="skill-creator">Posted by: <?php echo $row['creator']; ?></div>
+                    <div class="skill-creator">Posted by: <a href="view_profile.php?user_id=<?php echo $row['user_id']; ?>"><?php echo htmlspecialchars($row['creator']); ?></a></div>
                     <div class="skill-actions">
                         <?php if($isPremium): ?>
                             <a href="<?php echo $row['video_link']; ?>" target="_blank"><i class="fas fa-video"></i> Watch Video</a>
